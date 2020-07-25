@@ -59,40 +59,36 @@
         <script type="text/javascript">
 var api_url = 'http://items.test/api/v1';
 $(document).ready(function () {
-    $('#undo_redo').multiselect({
+    $('#undo_redo').multiselect();
+
+    $.ajax({
+        url: api_url + '/itmeslist',
+        method: 'POST',
+        success: function (data) {
+            if (data.status_code == '200') {
+                $('#undo_redo').empty();
+                $.each(data.data, function (k, v) {
+                    if (v.category == 1) {
+                        var markup = "<option value=" + v.id + ">" + v.item_name + "</option>";
+                        $("#undo_redo").append(markup);
+                    }
+
+                    if (v.category == 2) {
+                        var markups = "<option value=" + v.id + ">" + v.item_name + "</option>";
+                        $("#undo_redo_to").append(markups);
+                    }
+                });
+            }
+
+            if (data.status_code == '422') {
+                var errors = data.data;
+                $.each(errors, function (key, val) {
+                    $("#item_name #" + key + "_err").html(val);
+                });
+
+            }
+        }
     });
-});
-
-$.ajax({
-    url: api_url + '/itmeslist',
-    method: 'POST',
-//                    data: {
-//                        category: 1,
-//                    },
-    success: function (data) {
-        if (data.status_code == '200') {
-            $('#undo_redo').empty();
-            $.each(data.data, function (k, v) {
-                if (v.category == 1) {
-                    var markup = "<option value=" + v.id + ">" + v.item_name + "</option>";
-                    $("#undo_redo").append(markup);
-                }
-
-                if (v.category == 2) {
-                    var markups = "<option value=" + v.id + ">" + v.item_name + "</option>";
-                    $("#undo_redo_to").append(markups);
-                }
-            });
-        }
-
-        if (data.status_code == '422') {
-            var errors = data.data;
-            $.each(errors, function (key, val) {
-                $("#item_name #" + key + "_err").html(val);
-            });
-
-        }
-    }
 });
 
 $("#add_item").click(function () {
@@ -104,11 +100,14 @@ $("#add_item").click(function () {
         },
         success: function (data) {
             if (data.status_code == '201') {
-                $('#item_name').empty();
+                $('#item_name').val('');
                 $('#undo_redo').empty();
                 $.each(data.data, function (k, v) {
-                    var markup = "<option value=" + v.id + ">" + v.item_name + "</option>";
-                    $("#undo_redo").append(markup);
+                    if (v.category == 1) {
+                        var markup = "<option value=" + v.id + ">" + v.item_name + "</option>";
+                        $("#undo_redo").append(markup);
+                    }
+                    $(this).prop('selected', false);
                 });
 
                 var validationerror = "<strong>Success! </strong>" + data.message;

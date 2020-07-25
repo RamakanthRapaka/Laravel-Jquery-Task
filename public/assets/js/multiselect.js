@@ -171,7 +171,16 @@
             moveToRight: function (options, silent, skipStack) {
 
                 var self = this;
-                if (Array.isArray($("#undo_redo").val())) {
+                var items_array = $("#undo_redo").val();
+                if (Array.isArray($("#undo_redo").val()) && items_array.length > 1) {
+                    var validationerror = "<strong>Error! </strong> Select Only One Item!";
+                    $(".alert").attr('class', 'alert alert-danger alert-dismissible fade in');
+                    $(".alert").append(validationerror);
+                    $(".alert").fadeTo(2000, 500).slideUp(500, function () {
+                        $(".alert").slideUp(500);
+                    });
+                }
+                if (Array.isArray($("#undo_redo").val()) && items_array.length == 1) {
                     console.log($("#undo_redo").val()[0]);
                     $.ajax({
                         url: api_url + '/saveorupdateitem',
@@ -236,8 +245,16 @@
             moveToLeft: function (options, silent, skipStack) {
 
                 var self = this;
-
-                if (Array.isArray($("#undo_redo_to").val())) {
+                var items_array = $("#undo_redo_to").val();
+                if (Array.isArray($("#undo_redo").val()) && items_array.length > 1) {
+                    var validationerror = "<strong>Error! </strong> Select Only One Item!";
+                    $(".alert").attr('class', 'alert alert-danger alert-dismissible fade in');
+                    $(".alert").append(validationerror);
+                    $(".alert").fadeTo(2000, 500).slideUp(500, function () {
+                        $(".alert").slideUp(500);
+                    });
+                }
+                if (Array.isArray($("#undo_redo_to").val()) && items_array.length == 1) {
                     console.log($("#undo_redo_to").val()[0]);
                     $.ajax({
                         url: api_url + '/saveorupdateitem',
